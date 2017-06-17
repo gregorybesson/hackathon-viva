@@ -1,4 +1,22 @@
 var twilio_config = {
+	"name": "Click To Call: Twilio & Node",
+	"description": "An example of implementing click to call functionality in a Node.js application",
+	"keywords": [
+		"node.js",
+		"API",
+		"twilio",
+		"expressjs",
+		"Express",
+		"Tutorial",
+		"Telephone API",
+		"Voice API",
+		"REST API",
+		"Demo"
+	],
+	"website": "https://twilio.com/docs/howto/click-to-call-walkthrough",
+	"repository": "https://github.com/TwilioDevEd/clicktocall-node",
+	"logo": "https://s3-us-west-2.amazonaws.com/deved/twilio-logo.png",
+	"success_url": "/landing.html",
 	accountSid: 'ACd1550dce7f28d8a378c13b517b9bf0e8',
 	authToken: 'cba9bde18db21d91090c5c38ca13fd7d',
 	from:  '+33756797227'
@@ -60,6 +78,45 @@ app.post('/sendsms', function (req, res) {
 		res.json(result);
 	}
 })
+
+app.post('/call', function(request, response) {
+	// This should be the publicly accessible URL for your application
+	// Here, we just use the host for the application making the request,
+	// but you can hard code it or use something different if need be
+	var salesNumber = "0033614322741";
+	var url = 'http://' + request.headers.host + '/outbound/' + encodeURIComponent(salesNumber)
+
+	var options = {
+		to: request.body.to,
+		from: twilio_config.from,
+		url: url,
+	};
+
+	// Place an outbound call to the user, using the TwiML instructions
+	// from the /outbound route
+	client.calls.create(options)
+		.then((message) => {
+			console.log(message.responseText);
+			response.send('Thank you! We will be calling you shortly.');
+		})
+		.catch((error) => {
+			console.log(error);
+			response.status(500).send(error);
+		});
+});
+
+app.post('/outbound/:salesNumber', function(request, response) {
+	var salesNumber = request.params.salesNumber;
+	var twimlResponse = new VoiceResponse();
+
+	twimlResponse.say('Thanks for contacting our sales department. Our ' +
+						'next available representative will take your call. ',
+						{ voice: 'alice' });
+
+	twimlResponse.dial(salesNumber);
+
+	response.send(twimlResponse.toString());
+});
 
 
 var server = app.listen(8000, function () {
