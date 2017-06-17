@@ -55,6 +55,10 @@ app.get('/medication', function (req, res) {
    res.sendFile(path.join(__dirname + '/medication.html'));
 })
 
+app.get('/newssante', function (req, res) {
+   res.sendFile(path.join(__dirname + '/newssante.html'));
+})
+
 app.get('/falling', function (req, res) {
    res.sendFile(path.join(__dirname + '/falling.html'));
 })
@@ -91,27 +95,6 @@ app.post('/call', function(req, res) {
 
 	data.to.forEach(callPhone(element));
 	res.json({'result': true});
-});
-
-app.post('/call', function(req, res) {
-	var url = 'http://google.com';
-
-	var options = {
-		to: req.body.to,
-		from: twilio_config.from,
-		url: url,
-	};
-
-	client.calls.create(options)
-		.then((message) => {
-			console.log(message.responseText);
-			res.setHeader('Content-Type', 'application/json');
-			res.json({'result': true, 'message': 'Call in coming'});
-		})
-		.catch((error) => {
-			console.log(error);
-			res.status(500).send(error);
-		});
 });
 
 var server = app.listen(8000, function () {
