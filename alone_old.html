@@ -29,33 +29,47 @@
       messageSorry = "Desolé,je n'ai pas encore la réponse à ta demande";
       var 
 
-      message1 = "Cela fait deux semaines que vous n'etes pas sorti de chez vous, je me suis permis de prévenir vos proches.",
+      message1 = "ça fait deux semaines, que vous n'êtes pas sorti de chez vous?,voulez vous que j'appelle un proche ?",
+
+      message2 = "ça fait deux semaines, que vous n'avez pas parlé avec quelqu'un, voulez vous que j'appelle un proche?",
 
       NumProche = "",
 
       entree1 = "Oui";
 
     $(document).ready(function() {
-		  respond(message1);
+		respond(message2);
       $speechInput = $("#speech");
-      $recBtn = $("#rec");
 
-      // $speechInput.keypress(function(event) {
-      //   if (event.which == 13) {
-      //     event.preventDefault();
-      //     send();
-      //   }
-      // });
+     $recBtn = $("#rec");
 
-      // $recBtn.on("click", function(event) {
-      //   switchRecognition();
-      // });
+      $speechInput.keypress(function(event) {
+
+        if (event.which == 13) {
+
+          event.preventDefault();
+
+          send();
+
+        }
 
 
-      // $(".debug__btn").on("click", function() {
-      //   $(this).next().toggleClass("is-active");
-      //   return false;
-      // });
+      });
+
+      $recBtn.on("click", function(event) {
+
+        switchRecognition();
+
+      });
+
+
+      $(".debug__btn").on("click", function() {
+
+        $(this).next().toggleClass("is-active");
+
+        return false;
+
+      });
 
     });
 
@@ -243,21 +257,7 @@
         window.speechSynthesis.speak(msg);
 
         msg.onend = function(e){
-        	$.ajax({
-            type: "POST",
-            url: "http://localhost:8000/sendsms",
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            data: JSON.stringify({"to": "+33783037579", "body": "Bonjour"}),
-
-            success: function(data) {
-              // appeler correspondant et grand mere
-            },
-
-            error: function() {
-              // pas d'erreur
-            }
-          });
+        	switchRecognition()
         }
 
       }

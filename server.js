@@ -25,6 +25,10 @@ app.get('/alone', function (req, res) {
    res.sendFile(path.join(__dirname + '/alone.html'));
 })
 
+app.get('/falling', function (req, res) {
+   res.sendFile(path.join(__dirname + '/falling.html'));
+})
+
 app.post('/sendsms', function (req, res) {
 	var data = req.body;
 	var result = {};
