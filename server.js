@@ -88,7 +88,7 @@ app.post('/call', function(request, response) {
 	// Here, we just use the host for the application making the request,
 	// but you can hard code it or use something different if need be
 	var salesNumber = "0033614322741";
-	var url = 'http://' + request.headers.host + '/outbound/' + encodeURIComponent(salesNumber)
+	var url = 'http://guiedo.com:8087/outbound/' + encodeURIComponent(salesNumber)
 
 	var options = {
 		to: request.body.to,
@@ -101,6 +101,7 @@ app.post('/call', function(request, response) {
 	client.calls.create(options)
 		.then((message) => {
 			console.log(message.responseText);
+			// Reponse
 			response.send('Thank you! We will be calling you shortly.');
 		})
 		.catch((error) => {
@@ -129,7 +130,6 @@ app.post('/call', function(req, res) {
 			res.status(500).send(error);
 		});
 });
-
 
 var server = app.listen(8000, function () {
    var host = server.address().address
