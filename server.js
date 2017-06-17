@@ -21,6 +21,10 @@ app.get('/voice', function (req, res) {
    res.sendFile(path.join(__dirname + '/voice.html'));
 })
 
+app.get('/alone', function (req, res) {
+   res.sendFile(path.join(__dirname + '/alone.html'));
+})
+
 app.post('/sendsms', function (req, res) {
 	var data = req.body;
 	var result = {};
