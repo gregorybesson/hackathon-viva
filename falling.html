@@ -21,7 +21,7 @@
       messageInternalError = "Oh non, il ya une erreur côté serveur",
       mesageSorry = "Desolé,je n'ai pas encore la réponse à ta demande",
       message1 = "Est-ce que vous allez bien ?",
-      NumProche = "",
+      NumProche = ['+33783037579'],
       entree1 = "Oui";
       rassure = "D'accord, je suis rassuré"
 
@@ -132,7 +132,7 @@
           url: "http://localhost:8000/call",
           contentType: "application/json; charset=utf-8",
           dataType: "json",
-          data: JSON.stringify({"to": "+33783037579"}),
+          data: JSON.stringify({"to": NumProche}),
 
           success: function(data) {
             // appeler correspondant et grand mere
