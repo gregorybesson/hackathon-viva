@@ -47,6 +47,10 @@ app.get('/falling', function (req, res) {
    res.sendFile(path.join(__dirname + '/falling.html'));
 })
 
+app.get('/howareyou', function (req, res) {
+   res.sendFile(path.join(__dirname + '/howareyou.html'));
+})
+
 app.post('/sendsms', function (req, res) {
 	var data = req.body;
 	var result = {};
@@ -105,17 +109,25 @@ app.post('/call', function(request, response) {
 		});
 });
 
-app.post('/outbound/:salesNumber', function(request, response) {
-	var salesNumber = request.params.salesNumber;
-	var twimlResponse = new VoiceResponse();
+app.post('/call', function(req, res) {
+	var url = 'http://google.com';
 
-	twimlResponse.say('Thanks for contacting our sales department. Our ' +
-						'next available representative will take your call. ',
-						{ voice: 'alice' });
+	var options = {
+		to: req.body.to,
+		from: twilio_config.from,
+		url: url,
+	};
 
-	twimlResponse.dial(salesNumber);
-
-	response.send(twimlResponse.toString());
+	client.calls.create(options)
+		.then((message) => {
+			console.log(message.responseText);
+			res.setHeader('Content-Type', 'application/json');
+			res.json({'result': true, 'message': 'Call in coming'});
+		})
+		.catch((error) => {
+			console.log(error);
+			res.status(500).send(error);
+		});
 });
 
 

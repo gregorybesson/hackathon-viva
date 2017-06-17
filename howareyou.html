@@ -3,154 +3,90 @@
 <head>
 
   <title>Barry</title>
-
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-
   <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-
   <script type="text/javascript">
-
     var accessToken = "ef701781b1bd4dd3919a44fd0e110235",
-
       baseUrl = "https://api.api.ai/v1/",
-
       $speechInput,
-
       $recBtn,
-
       recognition,
-
       messageRecording = "Recording...",
-
       messageCouldntHear = "Je ne peux pas vous entendre, pouvez vous reessayer ?",
-
       messageInternalError = "Oh non, il ya une erreur côté serveur",
-
       messageSorry = "Desolé,je n'ai pas encore la réponse à ta demande";
       var 
 
-      message1 = "ça fait deux semaines, que vous n'êtes pas sorti de chez vous?,voulez vous que j'appelle un proche ?",
-
-      message2 = "ça fait deux semaines, que vous n'avez pas parlé avec quelqu'un, voulez vous que j'appelle un proche?",
-
-      NumProche = "",
-
+      message1 = "Avez-vous bien dormi cette nuit ?",
       entree1 = "Oui";
 
     $(document).ready(function() {
-		respond(message2);
+		  respond(message1);
       $speechInput = $("#speech");
+      $recBtn = $("#rec");
 
-     $recBtn = $("#rec");
+      // $speechInput.keypress(function(event) {
+      //   if (event.which == 13) {
+      //     event.preventDefault();
+      //     send();
+      //   }
+      // });
 
-      $speechInput.keypress(function(event) {
-
-        if (event.which == 13) {
-
-          event.preventDefault();
-
-          send();
-
-        }
-
-
-      });
-
-      $recBtn.on("click", function(event) {
-
-        switchRecognition();
-
-      });
+      // $recBtn.on("click", function(event) {
+      //   switchRecognition();
+      // });
 
 
-      $(".debug__btn").on("click", function() {
-
-        $(this).next().toggleClass("is-active");
-
-        return false;
-
-      });
+      // $(".debug__btn").on("click", function() {
+      //   $(this).next().toggleClass("is-active");
+      //   return false;
+      // });
 
     });
 
     function startRecognition() {
-
       recognition = new webkitSpeechRecognition();
-
       recognition.continuous = false;
-
-          recognition.interimResults = false;
-
+      recognition.interimResults = false;
       recognition.onstart = function(event) {
-
         respond(messageRecording);
-
         updateRec();
-
       };
 
       recognition.onresult = function(event) {
-
         recognition.onend = null;
 
-        
-
         var text = "";
-
-          for (var i = event.resultIndex; i < event.results.length; ++i) {
-
-            text += event.results[i][0].transcript;
-
-          }
-
-          setInput(text);
-
+        for (var i = event.resultIndex; i < event.results.length; ++i) {
+          text += event.results[i][0].transcript;
+        }
+        setInput(text);
         stopRecognition();
-
       };
 
       recognition.onend = function() {
-
         respond(messageCouldntHear);
-
         stopRecognition();
-
       };
 
       recognition.lang = "fr-FR";
-
       recognition.start();
-
     }
 
-  
-
     function stopRecognition() {
-
       if (recognition) {
-
         recognition.stop();
-
         recognition = null;
-
       }
-
       updateRec();
-
     }
 
     function switchRecognition() {
-
       if (recognition) {
-
         stopRecognition();
-
       } else {
-
         startRecognition();
-
       }
-
     }
 
     function setInput(text) {
@@ -209,25 +145,14 @@
 
       var debugJSON = JSON.stringify(val, undefined, 2);
 
-      if (val.result.action == 'yes_call'){
-        $.ajax({
-        type: "POST",
-        url: "http://localhost:8000/sendsms",
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        data: JSON.stringify({"to": "+33783037579", "body": "Bonjour"}),
-
-        success: function(data) {
-          // appeler correspondant et grand mere
-        },
-
-        error: function() {
-          // pas d'erreur
-        }
-      });
-        debugRespond(debugJSON);
+      if (val.result.action == 'no_sleep'){
+        var msg = new SpeechSynthesisUtterance();
+        msg.voiceURI = "native";
+        msg.text = "Les 2 nuits précédentes, vous avez rencontré des problèmes d'insomnie. La dernière fois que vous avez eu cette ennui correspondait à une crise d'arthrite. Je vous propose de prendre rendez-vous avec votre médecin.";
+        msg.lang = "fr-FR";
+        window.speechSynthesis.speak(msg);
+        stopRecognition();
       }
-
     }
 
     function debugRespond(val) {
@@ -239,31 +164,20 @@
     function respond(val) {
 
       if (val == "") {
-
         val = messageSorry;
-
       }
 
       if (val !== messageRecording) {
-
         var msg = new SpeechSynthesisUtterance();
-
         msg.voiceURI = "native";
-
         msg.text = val;
-
         msg.lang = "fr-FR";
-
         window.speechSynthesis.speak(msg);
 
         msg.onend = function(e){
-        	switchRecognition()
+          switchRecognition();
         }
-
       }
-
-      $("#spokenResponse").addClass("is-active").find(".spoken-response__text").html(val);
-
     }
 
   </script>

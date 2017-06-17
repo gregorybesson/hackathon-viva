@@ -129,10 +129,10 @@
       if (val.result.action == 'no_ok'){
         $.ajax({
           type: "POST",
-          url: "http://localhost:8000/sendsms",
+          url: "http://localhost:8000/call",
           contentType: "application/json; charset=utf-8",
           dataType: "json",
-          data: JSON.stringify({"to": "+33783037579", "body": "Bonjour"}),
+          data: JSON.stringify({"to": "+33783037579"}),
 
           success: function(data) {
             // appeler correspondant et grand mere
@@ -145,7 +145,6 @@
         debugRespond(debugJSON);
       }
 
-      console.log(val.result.action)
       if (val.result.action == 'yes_ok'){
         var msg = new SpeechSynthesisUtterance();
         msg.voiceURI = "native";
