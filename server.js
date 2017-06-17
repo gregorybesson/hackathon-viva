@@ -22,6 +22,11 @@ function sendSMS(to, body) {
 }
 
 function callPhone(to) {
+	var options = {
+		to: to,
+		from: twilio_config.from,
+		url: "http://google.com",
+	};
 	client.calls.create(options)
 		.then((message) => {
 			console.log(message.responseText);
@@ -67,7 +72,7 @@ app.post('/sendsms', function (req, res) {
 	var data = req.body;
 	var result = {'result': true};
 	if(data.to !== undefined && data.body !== undefined) {
-		data.to.forEach(sendSMS(element, data.body));
+		data.to.forEach(function(el) {sendSMS(el, data.body); });
 		res.setHeader('Content-Type', 'application/json');
 		res.json(result);
 	}
@@ -81,37 +86,9 @@ app.post('/sendsms', function (req, res) {
 
 app.post('/call', function(req, res) {
 	var data = req.body;
-	var url = 'http://google.com';
 
-	var options = {
-		to: req.body.to,
-		from: twilio_config.from,
-		url: url,
-	};
-
-	data.to.forEach(callPhone(element));
+	data.to.forEach(function(el) {callPhone(el);});
 	res.json({'result': true});
-});
-
-app.post('/call', function(req, res) {
-	var url = 'http://google.com';
-
-	var options = {
-		to: req.body.to,
-		from: twilio_config.from,
-		url: url,
-	};
-
-	client.calls.create(options)
-		.then((message) => {
-			console.log(message.responseText);
-			res.setHeader('Content-Type', 'application/json');
-			res.json({'result': true, 'message': 'Call in coming'});
-		})
-		.catch((error) => {
-			console.log(error);
-			res.status(500).send(error);
-		});
 });
 
 var server = app.listen(8000, function () {
